@@ -1,0 +1,6 @@
+pandas==2.2.2
+pyarrow==16.1.0
+psycopg2-binary==2.9.9
+SQLAlchemy==1.4.52
+apache-airflow-providers-postgres==5.11.1
+pyspark==3.5.1
