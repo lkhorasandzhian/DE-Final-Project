@@ -8,8 +8,8 @@
 
 - `sql/init` — создание схем и таблиц
 - `dags` — DAG'и Airflow
-- `scripts/etl` — загрузка данных в `core`
-- `scripts/datamarts` — расчет витрин `dm`
+- `src/etl` — загрузка данных в `core`
+- `src/datamarts` — расчет витрин `dm`
 - `data/raw` — исходные parquet-файлы
 
 ## Быстрый старт
