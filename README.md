@@ -11,8 +11,8 @@
 
 - `sql/init` — SQL-скрипты инициализации PostgreSQL (создание схем и таблиц)
 - `dags` — DAG'и Airflow
-- `src/etl` — загрузка данных в слой `core`
-- `src/datamarts` — расчет витрин слоя `dm`
+- `src/etl` — загрузка данных в `core`
+- `src/datamarts` — расчет витрин `dm`
 - `data/raw` — исходные parquet-файлы
 - `logs` — логи Airflow
 - `plugins` — плагины Airflow
