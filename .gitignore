@@ -212,3 +212,6 @@ plugins/
 
 # MacOS file
 .DS_Store
+
+# Data stage files
+data/stage
