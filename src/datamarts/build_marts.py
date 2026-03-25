@@ -1,6 +1,9 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, sum as spark_sum, count, countDistinct, avg, when, to_date, year, month, dayofmonth
+from pyspark.sql.functions import col, sum as spark_sum, max as spark_max, count, countDistinct, avg, when, to_date, year, month, dayofmonth
 from sqlalchemy import create_engine, text
+
+from src.common.db_config import get_jdbc_properties, get_jdbc_url, get_psycopg2_style_url
+
 
 def main():
 
@@ -10,20 +13,16 @@ def main():
     .config("spark.jars", "/opt/spark/jars/postgresql.jar")
     .getOrCreate())
 
-    DB_URL = "postgresql://postgres:postgres@postgres:5432/postgres"
-    engine = create_engine(DB_URL)
+    engine = create_engine(get_psycopg2_style_url())
 
     with engine.begin() as conn:
         conn.execute(text("TRUNCATE TABLE dm.dm_orders RESTART IDENTITY CASCADE"))
+        conn.execute(text("TRUNCATE TABLE dm.dm_orders_aggregated RESTART IDENTITY CASCADE"))
         conn.execute(text("TRUNCATE TABLE dm.dm_items RESTART IDENTITY CASCADE"))
-        
+        conn.execute(text("TRUNCATE TABLE dm.active_drivers RESTART IDENTITY CASCADE"))
 
-    jdbc_url = "jdbc:postgresql://postgres:5432/postgres"
-    jdbc_properties = {
-        "user": "postgres",
-        "password": "postgres",
-        "driver": "org.postgresql.Driver"
-    }
+    jdbc_url = get_jdbc_url()
+    jdbc_properties = get_jdbc_properties()
 
     orders = spark.read.jdbc(url=jdbc_url, table="core.orders", properties=jdbc_properties)
     order_items = spark.read.jdbc(url=jdbc_url, table="core.order_items", properties=jdbc_properties)
@@ -51,12 +50,18 @@ def main():
 
     orders_with_items = orders_with_items.join(driver_changes, "order_id", "left")
 
+    orders_with_items = orders_with_items.withColumn(
+        "driver_changed",
+        when(col("driver_count") > 1, 1).otherwise(0)
+    )
+
     dm_orders = orders_with_items.groupBy(
         "order_id", "user_id", "store_id", "created_at", "delivery_cost",
         "canceled_at", "delivered_at", "order_cancellation_reason"
     ).agg(
         spark_sum("item_revenue").alias("turnover"),
-        spark_sum("item_revenue_actual").alias("revenue")
+        spark_sum("item_revenue_actual").alias("revenue"),
+        spark_max("driver_changed").alias("driver_changed"),
     )
 
     dm_orders = dm_orders.withColumn(
@@ -82,11 +87,6 @@ def main():
     dm_orders = dm_orders.withColumn(
         "canceled_by_service",
         when(col("order_cancellation_reason").isin(["Ошибка приложения", "Проблемы с оплатой"]), 1).otherwise(0)
-    )
-
-    dm_orders = dm_orders.withColumn(
-        "driver_changed",
-        when(col("driver_count") > 1, 1).otherwise(0)
     )
 
     dm_orders = dm_orders.withColumn("date", to_date("created_at"))

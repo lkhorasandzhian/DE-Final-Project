@@ -1,3 +1,9 @@
+x-airflow-build: &airflow_build
+  context: .
+  args:
+    PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.tuna.tsinghua.edu.cn/simple}
+    PIP_TRUSTED_HOST: ${PIP_TRUSTED_HOST:-pypi.tuna.tsinghua.edu.cn}
+
 services:
   postgres:
     image: postgres:15
@@ -29,7 +35,7 @@ services:
       - postgres
 
   airflow-init:
-    build: .
+    build: *airflow_build
     container_name: fp_airflow_init
     depends_on:
       postgres:
@@ -54,7 +60,7 @@ services:
     command: ["/opt/airflow/scripts/airflow-init.sh"]
 
   airflow-webserver:
-    build: .
+    build: *airflow_build
     container_name: fp_airflow_webserver
     restart: always
     depends_on:
@@ -62,6 +68,8 @@ services:
         condition: service_healthy
       airflow-init:
         condition: service_completed_successfully
+    env_file:
+      - .env
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
@@ -81,7 +89,7 @@ services:
     command: webserver
 
   airflow-scheduler:
-    build: .
+    build: *airflow_build
     container_name: fp_airflow_scheduler
     restart: always
     depends_on:
@@ -89,6 +97,8 @@ services:
         condition: service_healthy
       airflow-init:
         condition: service_completed_successfully
+    env_file:
+      - .env
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"

@@ -1,6 +1,3 @@
-pandas==2.2.2
-fastparquet==2024.2.0
-sqlalchemy==1.4.52
-psycopg2-binary==2.9.9
-apache-airflow-providers-postgres==5.11.1
+# В apache/airflow образе уже есть sqlalchemy/psycopg2 — не дублируем, меньше обращений к PyPI.
+# DAG'и: только PythonOperator + Spark/JDBC/SQLAlchemy.
 pyspark==3.5.1
