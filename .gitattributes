@@ -1,0 +1,8 @@
+# По умолчанию — LF в репозитории
+* text=auto
+
+# PowerShell
+*.ps1 text eol=crlf
+
+# Shell
+*.sh text eol=lf
