@@ -1,4 +1,3 @@
-# src/datamarts/build_marts.py
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, sum as spark_sum, count, countDistinct, avg, when, to_date, year, month, dayofmonth
 from sqlalchemy import create_engine, text
