@@ -209,3 +209,6 @@ __marimo__/
 # Docker auto-enerated folders
 logs/
 plugins/
+
+# MacOS file
+.DS_Store
