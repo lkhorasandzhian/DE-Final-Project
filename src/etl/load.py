@@ -1,6 +1,9 @@
 from pyspark.sql import SparkSession
 from sqlalchemy import create_engine, text
 
+from src.common.db_config import get_jdbc_properties, get_jdbc_url, get_psycopg2_style_url
+
+
 def load():
     spark = SparkSession.builder \
         .appName("Load") \
@@ -9,8 +12,7 @@ def load():
 
     df = spark.read.parquet("/opt/airflow/data/stage/transformed")
 
-    DB_URL = "postgresql://postgres:postgres@postgres:5432/postgres"
-    engine = create_engine(DB_URL)
+    engine = create_engine(get_psycopg2_style_url())
 
     with engine.begin() as conn:
         conn.execute(text("TRUNCATE TABLE core.users RESTART IDENTITY CASCADE"))
@@ -22,12 +24,8 @@ def load():
         conn.execute(text("TRUNCATE TABLE core.order_drivers RESTART IDENTITY CASCADE"))
 
 
-    jdbc_url = "jdbc:postgresql://postgres:5432/postgres"
-    jdbc_props = {
-        "user": "postgres",
-        "password": "postgres",
-        "driver": "org.postgresql.Driver"
-    }
+    jdbc_url = get_jdbc_url()
+    jdbc_props = get_jdbc_properties()
 
     users_df = df.select("user_id", "user_phone").distinct().dropna(subset=["user_id"])
     users_df.write.jdbc(url=jdbc_url, table="core.users", mode="append", properties=jdbc_props)

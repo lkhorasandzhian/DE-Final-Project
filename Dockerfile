@@ -11,8 +11,14 @@ RUN apt-get update && apt-get install -y \
 
 USER airflow
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
+ENV PIP_DEFAULT_TIMEOUT=600
+ENV PIP_RETRIES=30
+
+RUN pip install --no-cache-dir \
+    --retries 30 \
+    --prefer-binary \
+    -r requirements.txt
 
 USER root
 
