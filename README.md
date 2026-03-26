@@ -110,7 +110,7 @@ docker compose up --build
 
 - **Airflow**: http://localhost:8080
 - **pgAdmin**: http://localhost:5050
-- **PostgreSQL**: `localhost:5433`
+- **PostgreSQL**: `localhost:5432`
 
 ## Учетные данные
 
@@ -135,8 +135,8 @@ docker compose up --build
 
 В проекте предусмотрены следующие DAG'и:
 
-- `etl_core_dag` — чтение parquet-файлов и загрузка нормализованных данных в слой `core`
-- `build_datamarts_dag` — построение витрин слоя `dm`
+- `etl_pipeline` — чтение parquet-файлов и загрузка нормализованных данных в слой `core`
+- `datamart_pipeline` — построение витрин слоя `dm`
 
 ## Проверка после запуска
 
