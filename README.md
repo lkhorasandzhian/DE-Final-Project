@@ -3,6 +3,7 @@
 Итоговый проект по учебной дисциплине **«Python для инженерии данных»**.
 
 Проект разворачивается как мультиконтейнерное приложение в Docker и включает:
+
 - **PostgreSQL** — основная БД для нормализованных таблиц и витрин;
 - **pgAdmin** — интерфейс для проверки таблиц и выполнения запросов;
 - **Apache Airflow** — оркестратор ETL/ELT-процессов.
@@ -23,6 +24,7 @@
 ## Требования
 
 Перед запуском убедитесь, что у вас установлены:
+
 - Docker Desktop
 - Docker Compose (или встроенная команда `docker compose`)
 - Git
@@ -70,13 +72,8 @@ AIRFLOW_ADMIN_EMAIL=admin@example.com
 docker compose up --build
 ```
 
-Если у вас используется старая форма команды, можно запустить так:
-
-```bash
-docker-compose up --build
-```
-
 При первом запуске:
+
 - поднимется PostgreSQL;
 - будут выполнены SQL-скрипты из `sql/init`;
 - выполнится инициализация Airflow;
@@ -115,17 +112,23 @@ docker compose up --build
 ## Учетные данные
 
 ### Airflow
+
 Используются значения из `.env`:
+
 - логин: `AIRFLOW_ADMIN_USERNAME`
 - пароль: `AIRFLOW_ADMIN_PASSWORD`
 
 ### pgAdmin
+
 Используются значения из `.env`:
+
 - email: `PGADMIN_DEFAULT_EMAIL`
 - пароль: `PGADMIN_DEFAULT_PASSWORD`
 
 ### PostgreSQL
+
 Используются значения из `.env`:
+
 - база данных: `POSTGRES_DB`
 - пользователь: `POSTGRES_USER`
 - пароль: `POSTGRES_PASSWORD`
@@ -149,9 +152,7 @@ docker ps
 ```
 
 2. Что Airflow открылся в браузере на `http://localhost:8080`
-
 3. Что pgAdmin открылся в браузере на `http://localhost:5050`
-
 4. Что в Airflow появились DAG'и проекта
 
 ## Полезные команды
